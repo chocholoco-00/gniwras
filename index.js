@@ -27,6 +27,9 @@ app.use('/compras', require('./routes/compras'));
 app.use('/stock', require('./routes/stock'));
 app.use('/ubicaciones', require('./routes/ubicacion'));
 app.use('/visual-pages', require('./routes/visualPages'));
+// Nuevas rutas para otras entradas y salidas
+app.use('/otras-entradas', require('./routes/otrasEntradas'));
+app.use('/otras-salidas', require('./routes/otrasSalidas'));
 
 
 app.listen(process.env.PORT, () => {

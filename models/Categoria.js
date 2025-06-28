@@ -16,7 +16,7 @@ const TipoSchema = new Schema({
 
 const CategoriaSchema = new Schema({
   nombre: { type: String, required: true, unique: true, trim: true, uppercase: true },
-  descripcion: { type: String, required: true, trim: true },
+  descripcion: { type: String, trim: true },
   tipos: { type: [TipoSchema], default: [] }
 }, { timestamps: true });
 

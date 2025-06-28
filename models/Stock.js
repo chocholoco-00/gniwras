@@ -7,7 +7,7 @@ const StockSchema = new Schema({
     // unique: true // <-- Elimina o comenta esta línea
   },
   codigoBarras: {
-    type: Number,
+    type: String, // Cambiado de Number a String para coincidir con los lotes de entrada
     // unique: true, // <-- QUITAR RESTRICCIÓN DE UNICIDAD
     required: true
   },

@@ -184,9 +184,16 @@ const eliminarProducto = async (req, res = response) => {
 
 // Obtener la tabla con las categorías o tipos de productos
 const obtenerCategoriasProductos = async (req, res = response) => {
-
-    const dbTipo = await Categoria.find()
-    res.json(dbTipo)
+    try {
+        // Permitir paginación y límite opcional
+        const limit = Math.max(1, Math.min(Number(req.query.limit) || 100, 500)); // máximo 500
+        const skip = Math.max(0, Number(req.query.skip) || 0);
+        const categorias = await Categoria.find().skip(skip).limit(limit);
+        const total = await Categoria.countDocuments();
+        res.json({ categorias, total });
+    } catch (error) {
+        res.status(500).json({ ok: false, msg: 'Error al obtener categorías', error });
+    }
 }
 
 // Devuelve la categoría respectiva with los tipos de productos de acuerdo al nombre de la categoría recibida

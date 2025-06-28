@@ -11,7 +11,10 @@ const VentaSchema = new Schema({
   fecha: { type: Date, default: Date.now },
   identificacionCliente: { type: String },
   codigoBarraVenta: { type: String, required: true },
-  numeroCuenta: { type: Number, required: true }
+  numeroCuenta: { type: Number, required: true },
+  anulada: { type: Boolean, default: false },
+  anuladaPor: { type: String }, // usuario que anula
+  fechaAnulacion: { type: Date },
 });
 
 module.exports = model('Venta', VentaSchema);

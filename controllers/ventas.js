@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Venta = require('../models/Venta');
+const Stock = require('../models/Stock');
 
 const registrarVenta = async (req, res) => {
   try {
@@ -114,8 +115,42 @@ const obtenerVentaPorCodigoBarras = async (req, res) => {
   }
 };
 
+const anularVenta = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { usuario } = req.body; // usuario que anula
+    const venta = await Venta.findById(id);
+    if (!venta) {
+      return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
+    }
+    if (venta.anulada) {
+      return res.status(400).json({ ok: false, msg: 'La venta ya está anulada' });
+    }
+    // Revertir stock de cada producto vendido
+    for (const item of venta.productos) {
+      // Buscar stock existente para el producto (puedes mejorar lógica según ubicación si aplica)
+      let stock = await Stock.findOne({ producto: item.producto });
+      if (stock) {
+        stock.cantidad += item.cantidad;
+        await stock.save();
+      } else {
+        // Si no existe, crea un nuevo registro de stock básico
+        await Stock.create({ producto: item.producto, cantidad: item.cantidad, codigoBarras: Date.now(), ubicacion: 'ANULACION' });
+      }
+    }
+    venta.anulada = true;
+    venta.anuladaPor = usuario || 'sistema';
+    venta.fechaAnulacion = new Date();
+    await venta.save();
+    res.json({ ok: true, venta });
+  } catch (error) {
+    res.status(500).json({ ok: false, msg: 'Error al anular venta', error });
+  }
+};
+
 module.exports = {
   registrarVenta,
   obtenerVentas,
-  obtenerVentaPorCodigoBarras
+  obtenerVentaPorCodigoBarras,
+  anularVenta
 };
